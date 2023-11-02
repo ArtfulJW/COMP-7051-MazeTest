@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR;
@@ -167,17 +168,21 @@ namespace MazeAssignment
         */
         public void PrimAlgo(Point inputPoint)
         {
-            //foreach (List<Point> a in floor)
-            //{
-            //    foreach (Point b in a)
-            //    {
-            //        Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
-            //    }
-            //}
+            foreach (List<Point> a in floor)
+            {
+                foreach (Point b in a)
+                {
+                    Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
+                }
+            }
 
-            string direction = getLowestWeightDirection(inputPoint);
-            Destroy(getIntermediatePoint(inputPoint, direction).testPrefab);
-            PrimAlgo(getAdjacentPoint(inputPoint, direction));
+            //string direction = getLowestWeightDirection(inputPoint);
+            //Destroy(getIntermediatePoint(inputPoint, direction).testPrefab);
+            //Point a = getAdjacentPoint(inputPoint, direction);
+            //if (map[map.Count-1][map[0].Count-1] != a)
+            //{
+            //    PrimAlgo(getAdjacentPoint(inputPoint, direction));
+            //}
 
         }
 
@@ -227,11 +232,11 @@ namespace MazeAssignment
 
         public string getLowestWeightDirection(Point inputPoint)
         {
-            int lowest = inputPoint.cardinalDirection[0];
+            int lowest = 10000;
             int indexLowest = 0;
             for (int x = 0; x < inputPoint.cardinalDirection.Count; x++)
             {
-                if (inputPoint.cardinalDirection[x] < lowest && inputPoint.cardinalDirection[x] >= 0 )
+                if (inputPoint.cardinalDirection[x] < lowest && inputPoint.cardinalDirection[x] >= 1 )
                 {
                     indexLowest = x;
                     lowest = inputPoint.cardinalDirection[x];
@@ -257,25 +262,26 @@ namespace MazeAssignment
         // Helper Function - reset all weights directed towards the edges
         public void resetWeightsDirectedAtEdge()
         {
-            for (int x = 0; x < map.Count; x++)
+            for (int x = 0; x < floor.Count; x++)
             {
-                for (int z = 0; z < map[x].Count; z++)
+                for (int z = 0; z < floor[x].Count; z++)
                 {
                     if (x == 0)
                     {
-                        map[x][z].setWest(-1);
+                        floor[x][z].setWest(-1);
                     }
                     if (z == 0)
                     {
-                        map[x][z].setSouth(-1);
+                        floor[x][z].setSouth(-1);
                     }
-                    if (x == map[x].Count - 1)
+                    if (x == floor[x].Count - 1)
                     {
-                        map[x][z].setEast(-1);
+                        floor[x][z].setEast(-1);
                     }
-                    if (z == map[z].Count - 1)
+                    if (z == floor[z].Count - 1)
                     {
-                        map[x][z].setNorth(-1);
+                        floor[x][z].testPrefab.GetComponent<Renderer>().material.color = Color.yellow;
+                        floor[x][z].setNorth(-100);
                     }
                 }
             }
