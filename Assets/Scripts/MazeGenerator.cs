@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR;
@@ -39,18 +40,23 @@ namespace MazeAssignment
             resetWeightsDirectedAtEdge();
 
             // Initial Test
-            //PrimAlgo(floor[0][0]);
+            PrimAlgo(floor[0][0]);
         }
 
         // Update is called once per frame
         void Update()
         {
+            
+        }
 
+        private void OnDrawGizmos()
+        {
+            //debugFloor();
         }
 
         void generateMap()
         {
-            Debug.Log("Generating Map.");
+            UnityEngine.Debug.Log("Generating Map.");
             for (int x = 0; x < (2 * length) + 1; x++)
             {
                 List<Point> tempList = new List<Point>();
@@ -147,7 +153,7 @@ namespace MazeAssignment
                 }
 
             }
-            Debug.Log("Number of Floors:" + count);
+            UnityEngine.Debug.Log("Number of Floors:" + count);
         }
 
         /* Prim Algo
@@ -161,17 +167,17 @@ namespace MazeAssignment
         */
         public void PrimAlgo(Point inputPoint)
         {
-            foreach (List<Point> a in floor)
-            {
-                foreach (Point b in a)
-                {
-                    Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
-                }
-            }
+            //foreach (List<Point> a in floor)
+            //{
+            //    foreach (Point b in a)
+            //    {
+            //        Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
+            //    }
+            //}
 
-            //string direction = getLowestWeightDirection(inputPoint);
-            //Destroy(getIntermediatePoint(inputPoint, direction).testPrefab);
-            //PrimAlgo(getAdjacentPoint(inputPoint, direction));
+            string direction = getLowestWeightDirection(inputPoint);
+            Destroy(getIntermediatePoint(inputPoint, direction).testPrefab);
+            PrimAlgo(getAdjacentPoint(inputPoint, direction));
 
         }
 
@@ -231,7 +237,7 @@ namespace MazeAssignment
                     lowest = inputPoint.cardinalDirection[x];
                 }
             }
-            Debug.Log("LOWEST: " + lowest);
+            UnityEngine.Debug.Log("LOWEST: " + lowest);
             switch (indexLowest)
             {
                 case 0:
@@ -271,6 +277,18 @@ namespace MazeAssignment
                     {
                         map[x][z].setNorth(-1);
                     }
+                }
+            }
+        }
+
+        public void debugFloor()
+        {
+            foreach(List<Point> a in floor) 
+            {
+                foreach(Point b in a)
+                {
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawSphere(b.pos, 1);
                 }
             }
         }
