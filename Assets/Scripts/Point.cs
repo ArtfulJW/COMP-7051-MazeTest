@@ -79,6 +79,7 @@ namespace MazeAssignment
             }
         }
 
+        // Generic Setter Functions
         public void setNorth(int input)
         {
             cardinalDirection[0] = input;
@@ -98,6 +99,7 @@ namespace MazeAssignment
         {
             cardinalDirection[3] = input;
         }
+
 
     }
 }

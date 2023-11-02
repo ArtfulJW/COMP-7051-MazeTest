@@ -63,7 +63,7 @@ namespace MazeAssignment
                     Point point = new Point(this.transform.position.x + x, this.transform.position.y, this.transform.position.z + z);
 
                     // Associate a prefab to the Point class, by Instantiating it at the current Position of this Point, modified by the map index.
-                    point.testPrefab = Instantiate(testPrefab, new Vector3(point.pos.x + x, point.pos.y, point.pos.z + z), Quaternion.identity);
+                    point.testPrefab = Instantiate(testPrefab, new Vector3(point.pos.x, point.pos.y, point.pos.z), Quaternion.identity);
 
                     // Add to tempList
                     tempList.Add(point);
@@ -103,6 +103,14 @@ namespace MazeAssignment
                     b.testPrefab.GetComponent<Renderer>().material.color = Color.black;
                 }
             }
+            
+            //for (int x = 0; x < floor.Count; x++)
+            //{
+            //    Debug.Log("Sizeof List in List: " + x + " = " + floor[x].Count);
+            //}
+
+            floor[0][0].testPrefab.GetComponent<Renderer>().material.color = Color.blue;
+            floor[length-1][length-1].testPrefab.GetComponent<Renderer>().material.color = Color.red;
         }
 
         // Testing Function - detect all the Points that're "Floors"
@@ -122,11 +130,19 @@ namespace MazeAssignment
                     }
                 }
 
-                floor.Add(tempList);
+                if (tempList.Count > 0)
+                {
+                    floor.Add(tempList);
+                }
 
             }
             Debug.Log("Number of Floors:" + count);
         }
+
+        /*
+         * Helper Function:
+         * On adding an edge to Prim's Algorithm, add the corresponding point from the map, to List<Point> floor.
+         */
 
 
         // Helper Function - Set the all the Walls
