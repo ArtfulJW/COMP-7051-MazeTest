@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR;
+using Debug = UnityEngine.Debug;
 
 namespace MazeAssignment
 {
@@ -59,6 +60,7 @@ namespace MazeAssignment
 
         void generateMap()
         {
+            //int temp = 0; 
             UnityEngine.Debug.Log("Generating Map.");
             for (int x = 0; x < (2 * length) + 1; x++)
             {
@@ -66,6 +68,7 @@ namespace MazeAssignment
 
                 for (int z = 0; z < (2 * length) + 1; z++)
                 {
+                    //temp++;
                     // Instantiate a Two-Dimensional Map of the Prefab.
                     //GameObject thing = Instantiate(testPrefab, new Vector3(this.transform.position.x + x, this.transform.position.y, this.transform.position.z + z), Quaternion.identity);
                     //tempList.Add(thing);
@@ -83,7 +86,7 @@ namespace MazeAssignment
                 // Every Column List, Add to Map
                 map.Add(tempList);
             }
-
+            //Debug.Log("GenerateMap.Count: " + temp)
         }
 
         // Testing Function
@@ -170,13 +173,13 @@ namespace MazeAssignment
         */
         public void PrimAlgo(Point inputPoint)
         {
-            foreach (List<Point> a in floor)
-            {
-                foreach (Point b in a)
-                {
-                    Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
-                }
-            }
+            //foreach (List<Point> a in floor)
+            //{
+            //    foreach (Point b in a)
+            //    {
+            //        Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
+            //    }
+            //}
 
             //MST.Add(inputPoint);
 
@@ -185,6 +188,7 @@ namespace MazeAssignment
 
             //Point a = getAdjacentPoint(inputPoint, direction);
 
+            //// Sometimes it'll infinitely loop between two points
             //while (MST.Contains(a))
             //{
             //    a = getAdjacentPoint(inputPoint, direction);
@@ -194,6 +198,91 @@ namespace MazeAssignment
             //{
             //    PrimAlgo(a);
             //}
+
+            /*
+             * 1. Arbitrarily Start at any Point (I will choose map[0][0]).
+             * 2. While map[length][length] is not in the MST...
+             * 3. Check the Smallest Weight among the Points in the MST.
+             *      3.1 If the smallest weight leads to an AdjacentPoint that is in MST, set the weight to 999.
+             *          - Loop until I no longer have a smallest weight direction that directs inwards.
+             *      3.2 If NOW the smallest weight direction leads to an AdjacentPoint is NOT in MST
+             *          - Add to MST.
+             *          - Repeat Step 3
+             */
+
+            // Arbitrarily start at a Point
+            MST.Add(inputPoint);
+
+            // Loop until Exit Point is in MST
+            //while (!MST.Contains(map[length][length]))
+            for (int x = 0; x < 3; x++)
+            {
+                // Check and fix all smallest weight directions that lead inwards.
+                foreach(Point point in MST)
+                {
+                    // Acquire each cardinal direction to check
+                    List<string> adjacentDirection = getAllAdjacentPoints(point);
+                    foreach(string a in adjacentDirection)
+                    {
+                        Debug.Log(a);
+                    }
+                    foreach(string a in adjacentDirection)
+                    {
+
+                        // Check all cardinal directions of each Point if AdjacentPoint are in MST
+                        //if (MST.Contains(getAdjacentPoint(point, i)) && point.cardinalDirection[i] >= 1)
+                        //{
+                        //    point.setCardinalWeight(i, 420);
+                        //}
+
+
+
+                        // Acquire the direction of the smallest weight 
+                        //string direction = getLowestWeightDirection(point);
+                        // Check if AdjacentPoint is in MST.
+                        if (MST.Contains(getAdjacentPoint(point, a)))
+                        {
+                            // This current smallest weight direction is point inwards towards the MST. Set the weight to 0.
+                            point.setCardinalWeight(a, 420);
+                        }
+                    }
+                }
+
+                // At this point, there should now be no edges that point inwards. Now find the current smallest weight in MST (which points outwards)
+                Point temp = MST[0];
+                int lowest = 999;
+                string tempdirection = "";
+                foreach (Point point in MST)
+                {
+                    for (int i = 0; i < point.cardinalDirection.Count; i++)
+                    {
+                        Debug.Log(i);
+                        // Check every direction of every point for smaller weight
+                        if (point.cardinalDirection[i] < lowest)
+                        {
+                            // Smaller weight detected, record this Point and its direction.
+                            temp = point;
+                            lowest = point.cardinalDirection[i];
+                            tempdirection = getLowestWeightDirection(point);
+                        }
+                    }
+                }
+
+                // At this point I should have my next smallest weight that is NOT pointing inwards. Add it to MST. Set the internal direction to 999.
+                MST.Add(getAdjacentPoint(temp, tempdirection));
+                temp.setCardinalWeight(tempdirection, 420);
+                Destroy(getIntermediatePoint(temp, tempdirection).testPrefab);
+
+                // Repeat While loop until Exit Point is in MST..
+            }
+
+            for(int i = 0; i<MST.Count; i++)
+            {
+                for (int x = 0; x < MST[i].cardinalDirection.Count; x++) 
+                {
+                    Debug.Log(i+" " + MST[i].cardinalDirection[x]);
+                }
+            }
 
         }
 
@@ -241,9 +330,31 @@ namespace MazeAssignment
             return null;
         }
 
+        /*Helper Functions for access the Points in the Cardinal Directions
+         * 1. Get Point.MapPointer coordinates
+         * 2. Return Adjacent Point
+        */
+        public Point getAdjacentPoint(Point inputPoint, int Direction)
+        {
+            switch (Direction)
+            {
+                case 0:
+                    return floor[inputPoint.getFloorPointerX()][inputPoint.getFloorPointerZ() + 1];
+                case 1:
+                    return floor[inputPoint.getFloorPointerX()][inputPoint.getFloorPointerZ() - 1];
+                case 2:
+                    return floor[inputPoint.getFloorPointerX() + 1][inputPoint.getFloorPointerZ()];
+                case 3:
+                    return floor[inputPoint.getFloorPointerX() - 1][inputPoint.getFloorPointerZ()];
+            }
+
+            // Something went wrong
+            return null;
+        }
+
         public string getLowestWeightDirection(Point inputPoint)
         {
-            int lowest = 10000;
+            int lowest = 999;
             int indexLowest = 0;
             for (int x = 0; x < inputPoint.cardinalDirection.Count; x++)
             {
@@ -308,6 +419,35 @@ namespace MazeAssignment
                     Gizmos.DrawSphere(b.pos, 1);
                 }
             }
+        }
+
+        // Helper function - Get all adjacent Points
+        public List<string> getAllAdjacentPoints(Point inputPoint)
+        {
+            List<string> result = new List<string>();
+
+            Debug.Log("X: " + inputPoint.getFloorPointerX());
+            Debug.Log("Z: " + inputPoint.getFloorPointerX());
+
+            // Check North
+            if (inputPoint.getFloorPointerZ() + 1 >= 0 && inputPoint.getFloorPointerZ() + 1 <= length)
+            {
+                result.Add("North");
+            }
+            if (inputPoint.getFloorPointerZ() - 1 >= 0 && inputPoint.getFloorPointerZ() - 1 <= length)
+            {
+                result.Add("South");
+            }
+            if (inputPoint.getFloorPointerX() + 1 >= 0 && inputPoint.getFloorPointerX() + 1 <= length)
+            {
+                result.Add("East");
+            }
+            if (inputPoint.getFloorPointerX() - 1 >= 0 && inputPoint.getFloorPointerX() - 1 <= length)
+            {
+                result.Add("West");
+            }
+
+            return result;
         }
 
         // Helper Function - Set the all the Walls

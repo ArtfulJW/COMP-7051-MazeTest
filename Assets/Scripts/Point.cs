@@ -83,6 +83,45 @@ namespace MazeAssignment
             }
         }
 
+        public void setCardinalWeight(string direction, int weight)
+        {
+            switch (direction)
+            {
+                case "North":
+                    setNorth(weight);
+                    break;
+                case "South":
+                    setSouth(weight);
+                    break;
+                case "East":
+                    setEast(weight);
+                    break;
+                case "West":
+                    setWest(weight);
+                    break;
+            }
+        }
+
+
+        public void setCardinalWeight(int direction, int weight)
+        {
+            switch (direction)
+            {
+                case 0:
+                    setNorth(weight);
+                    break;
+                case 1:
+                    setSouth(weight);
+                    break;
+                case 2:
+                    setEast(weight);
+                    break;
+                case 3:
+                    setWest(weight);
+                    break;
+            }
+        }
+
         // Generic Setter Functions
         public void setNorth(int input)
         {
