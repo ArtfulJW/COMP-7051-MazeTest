@@ -19,6 +19,12 @@ namespace MazeAssignment
         [SerializeField]
         GameObject testPrefab;
 
+        [SerializeField]
+        GameObject StartTrigger;
+
+        [SerializeField]
+        GameObject EndTrigger;
+
         // Serialized Two Dimensional Map all the Points
         List<List<Point>> map = new List<List<Point>>();
 
@@ -28,6 +34,8 @@ namespace MazeAssignment
         enum CardinalDirection { North = 0, South = 1, East = 2, West = 3};
 
         List<Point> MST = new List<Point>();
+
+        int floorCount;
  
         // Start is called before the first frame update
         void Start()
@@ -37,7 +45,7 @@ namespace MazeAssignment
             // Map is Successfully Serialized
             //changeColorTest();
 
-            allocateFloors();
+            floorCount = allocateFloors();
             changeColorFloorTest();
 
             // Test Reset Edge weights
@@ -123,12 +131,12 @@ namespace MazeAssignment
             //    Debug.Log("Sizeof List in List: " + x + " = " + floor[x].Count);
             //}
 
-            floor[0][0].testPrefab.GetComponent<Renderer>().material.color = Color.blue;
-            floor[length-1][length-1].testPrefab.GetComponent<Renderer>().material.color = Color.red;
+            //floor[0][0].testPrefab.GetComponent<Renderer>().material.color = Color.blue;
+            //floor[length-1][length-1].testPrefab.GetComponent<Renderer>().material.color = Color.red;
         }
 
         // Testing Function - detect all the Points that're "Floors"
-        public void allocateFloors()
+        public int allocateFloors()
         {
             int count = 0;
             for (int x = 0; x < (2 * length) + 1; x++)
@@ -160,6 +168,7 @@ namespace MazeAssignment
 
             }
             UnityEngine.Debug.Log("Number of Floors:" + count);
+            return count;
         }
 
         /* Prim Algo
@@ -214,7 +223,7 @@ namespace MazeAssignment
             MST.Add(inputPoint);
 
             // Loop until Exit Point is in MST
-            while (!MST.Contains(map[length-1][length-1]))
+            while (!MST.Contains(floor[length - 1][length - 1]) || (MST.Count < floorCount))
             //for (int x = 0; x < 5; x++)
             {
                 // Check and fix all smallest weight directions that lead inwards.
@@ -274,6 +283,7 @@ namespace MazeAssignment
                 // Repeat While loop until Exit Point is in MST..
             }
 
+            // Debugging..
             for(int i = 0; i<MST.Count; i++)
             {
                 for (int x = 0; x < MST[i].cardinalDirection.Count; x++) 
@@ -281,6 +291,11 @@ namespace MazeAssignment
                     Debug.Log(i+" " + MST[i].cardinalDirection[x]);
                 }
             }
+
+            //destroyFloors();
+
+            //floor[0][0].testPrefab = Instantiate(StartTrigger, floor[0][0].pos, Quaternion.identity);
+            //floor[length - 1][length - 1].testPrefab = Instantiate(EndTrigger, floor[length - 1][length - 1].pos, Quaternion.identity);
 
         }
 
@@ -448,10 +463,17 @@ namespace MazeAssignment
             return result;
         }
 
-        // Helper Function - Set the all the Walls
-        public void setWalls()
+        // Helper Function - Delete all Floors
+        public void destroyFloors()
         {
-
+            foreach(List<Point> list in floor)
+            {
+                foreach(Point point in list)
+                {
+                    Destroy(point.testPrefab);
+                    //Destroy(map[point.getMapPointerX()][point.getMapPointerZ()].testPrefab);
+                }
+            }
         }
 
     }
