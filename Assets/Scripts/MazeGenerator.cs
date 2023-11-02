@@ -1,20 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace MazeAssignment
 {
     public class MazeGenerator : MonoBehaviour
     {
-
-        /*
-         * 
-         * Objective(s)
-         * 1. Create a 2D array of "Points"
-         * - Using the given Length, v, create a map of 2(v) + 1.
-         * 
-         * 
-         */
 
         [SerializeField]
         public int length;
@@ -28,6 +22,8 @@ namespace MazeAssignment
         // Serialized Two Dimensional Map of the Floors
         List<List<Point>> floor = new List<List<Point>>();
 
+        enum CardinalDirection { North = 0, South = 1, East = 2, West = 3};
+
         // Start is called before the first frame update
         void Start()
         {
@@ -38,6 +34,9 @@ namespace MazeAssignment
 
             allocateFloors();
             changeColorFloorTest();
+
+            // Initial Test
+            PrimAlgo(floor[0][0]);
         }
 
         // Update is called once per frame
@@ -82,7 +81,7 @@ namespace MazeAssignment
             {
                 for (int z = 0; z < (2 * length) + 1; z++)
                 {
-                    map[x][z].testPrefab.GetComponent<Renderer>().material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                    map[x][z].testPrefab.GetComponent<Renderer>().material.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
 
                     // This check only gathers the points that I want. (Tested)
                     if (x % 2 != 0 && z % 2 != 0)
@@ -124,7 +123,8 @@ namespace MazeAssignment
                 for (int z = 0; z < (2 * length) + 1; z++)
                 {
                     if (x % 2 != 0 && z % 2 != 0)
-                    { 
+                    {
+                        map[x][z].initMapPointer(x, z);
                         tempList.Add((Point)map[x][z]);
                         count++;
                     }
@@ -133,17 +133,117 @@ namespace MazeAssignment
                 if (tempList.Count > 0)
                 {
                     floor.Add(tempList);
+                    for (int i = 0; i < floor.Count; i++)
+                    {
+                        for (int j = 0; j < floor[i].Count; j++)
+                        {
+                            //Debug.Log("X: " + x + " Z: " + i);
+                            floor[i][j].initFloorPointer(i, j);
+                        }
+                    }
                 }
 
             }
             Debug.Log("Number of Floors:" + count);
         }
 
-        /*
-         * Helper Function:
-         * On adding an edge to Prim's Algorithm, add the corresponding point from the map, to List<Point> floor.
-         */
+        /* Prim Algo
+         * Setup: Initialize a MST List<Point>.
+         * 1. Get Point.MapPointer coordinates
+         * 2. Find the smallest VALID weight.
+         *      - Check if weight is greater than 0
+         * 3. Destroy the intermediary Wall between the two points
+         *      - Add THAT point to MST.
+         * 4. Add Adjacent Point (in the direction of the Cardinal Direction) to MST
+        */
+        public void PrimAlgo(Point inputPoint)
+        {
+            //foreach (List<Point> a in floor)
+            //{
+            //    foreach (Point b in a)
+            //    { 
+            //        Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
+            //    }
+            //}
 
+            string direction = getLowestWeightDirection(inputPoint);
+            Destroy(getIntermediatePoint(inputPoint, direction).testPrefab);
+            PrimAlgo(getAdjacentPoint(inputPoint, direction));
+
+        }
+
+        /*Helper Functions for access the Points in the Cardinal Directions
+         * 1. Get Point.MapPointer coordinates
+         * 2. Return Intermediary Point
+        */
+        public Point getIntermediatePoint(Point inputPoint, string Direction)
+        {
+            switch (Direction)
+            {
+                case "North":
+                    return map[inputPoint.getMapPointerX()][inputPoint.getMapPointerZ()+1];
+                case "South":
+                    return map[inputPoint.getMapPointerX()][inputPoint.getMapPointerZ()-1];
+                case "East":
+                    return map[inputPoint.getMapPointerX() + 1][inputPoint.getMapPointerZ()];
+                case "West":
+                    return map[inputPoint.getMapPointerX() - 1][inputPoint.getMapPointerZ()];
+            }
+
+            // Something went wrong
+            return null;
+        }
+
+        /*Helper Functions for access the Points in the Cardinal Directions
+         * 1. Get Point.MapPointer coordinates
+         * 2. Return Adjacent Point
+        */
+        public Point getAdjacentPoint(Point inputPoint, string Direction)
+        {
+            switch (Direction)
+            {
+                case "North":
+                    return floor[inputPoint.getFloorPointerX()][inputPoint.getFloorPointerZ() + 1];
+                case "South":
+                    return floor[inputPoint.getFloorPointerX()][inputPoint.getFloorPointerZ() - 1];
+                case "East":
+                    return floor[inputPoint.getFloorPointerX() + 1][inputPoint.getFloorPointerZ()];
+                case "West":
+                    return floor[inputPoint.getFloorPointerX() - 1][inputPoint.getFloorPointerZ()];
+            }
+
+            // Something went wrong
+            return null;
+        }
+
+        public string getLowestWeightDirection(Point inputPoint)
+        {
+            int lowest = inputPoint.cardinalDirection[0];
+            int indexLowest = 0;
+            for (int x = 0; x < inputPoint.cardinalDirection.Count; x++)
+            {
+                if (inputPoint.cardinalDirection[x] < lowest && inputPoint.cardinalDirection[x] >= 0 )
+                {
+                    indexLowest = x;
+                    lowest = inputPoint.cardinalDirection[x];
+                }
+            }
+            Debug.Log("LOWEST: " + lowest);
+            switch (indexLowest)
+            {
+                case 0:
+                    return "North";
+                case 1:
+                    return "South";
+                case 2:
+                    return "East";
+                case 3:
+                    return "West";
+            }
+
+            // Something went Wrong
+            return null;
+        }
 
         // Helper Function - Set the all the Walls
         public void setWalls()

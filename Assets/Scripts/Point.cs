@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -51,6 +52,9 @@ namespace MazeAssignment
         // Testing for Serializing the Prefab
         public GameObject testPrefab;
 
+        Vector2 mapPointer = new Vector2();
+        Vector2 floorPointer = new Vector2();
+
         // Constructor
         public Point(float x, float y, float z)
         {
@@ -100,6 +104,57 @@ namespace MazeAssignment
             cardinalDirection[3] = input;
         }
 
+        public void initMapPointer(int x, int z)
+        {
+            mapPointer.x = (x);
+            mapPointer.y = (z);
+        }
 
+        public int getMapPointerX()
+        {
+            return (int)mapPointer.x;
+        }
+
+        public int getMapPointerZ()
+        {
+            return (int)mapPointer.y;
+        }
+
+        public void setMapPointerX(int x)
+        {
+            mapPointer.x = x;
+        }
+
+        public void setMapPointerZ(int z)
+        {
+            mapPointer.y = z;
+        }
+
+
+        public void initFloorPointer(int x, int z)
+        {
+            floorPointer.x = (x);
+            floorPointer.y = (z);
+        }
+
+        public int getFloorPointerX()
+        {
+            return (int)floorPointer.x;
+        }
+
+        public int getFloorPointerZ()
+        {
+            return (int)floorPointer.y;
+        }
+
+        public void setFloorPointerX(int x)
+        {
+            floorPointer.x = x;
+        }
+
+        public void setFloorPointerZ(int z)
+        {
+            floorPointer.y = z;
+        }
     }
 }
