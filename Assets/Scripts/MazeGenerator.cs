@@ -214,14 +214,19 @@ namespace MazeAssignment
             MST.Add(inputPoint);
 
             // Loop until Exit Point is in MST
-            //while (!MST.Contains(map[length][length]))
-            for (int x = 0; x < 3; x++)
+            while (!MST.Contains(map[length-1][length-1]))
+            //for (int x = 0; x < 5; x++)
             {
                 // Check and fix all smallest weight directions that lead inwards.
                 foreach(Point point in MST)
                 {
                     // Acquire each cardinal direction to check
                     List<string> adjacentDirection = getAllAdjacentPoints(point);
+                    foreach(string a in adjacentDirection)
+                    {
+                        Debug.Log(a);
+                    }
+
                     foreach(string a in adjacentDirection)
                     {
 
@@ -252,7 +257,7 @@ namespace MazeAssignment
                         // Check every direction of every point for smaller weight
                         if (point.cardinalDirection[i] < lowest && point.cardinalDirection[i] >= 1)
                         {
-                            Debug.Log("lowest: " + lowest + " > " + "point.cardinalDirection[" + i + "]: " + point.cardinalDirection[i]);
+                            //Debug.Log("lowest: " + lowest + " > " + "point.cardinalDirection[" + i + "]: " + point.cardinalDirection[i]);
                             // Smaller weight detected, record this Point and its direction.
                             temp = point;
                             lowest = point.cardinalDirection[i];
@@ -423,19 +428,19 @@ namespace MazeAssignment
             //Debug.Log("Z: " + inputPoint.getFloorPointerX());
 
             // Check North
-            if (inputPoint.getFloorPointerZ() + 1 >= 0 && inputPoint.getFloorPointerZ() + 1 <= length)
+            if (inputPoint.getFloorPointerZ() + 1 >= 0 && inputPoint.getFloorPointerZ() + 1 < length)
             {
                 result.Add("North");
             }
-            if (inputPoint.getFloorPointerZ() - 1 >= 0 && inputPoint.getFloorPointerZ() - 1 <= length)
+            if (inputPoint.getFloorPointerZ() - 1 >= 0 && inputPoint.getFloorPointerZ() - 1 < length)
             {
                 result.Add("South");
             }
-            if (inputPoint.getFloorPointerX() + 1 >= 0 && inputPoint.getFloorPointerX() + 1 <= length)
+            if (inputPoint.getFloorPointerX() + 1 >= 0 && inputPoint.getFloorPointerX() + 1 < length)
             {
                 result.Add("East");
             }
-            if (inputPoint.getFloorPointerX() - 1 >= 0 && inputPoint.getFloorPointerX() - 1 <= length)
+            if (inputPoint.getFloorPointerX() - 1 >= 0 && inputPoint.getFloorPointerX() - 1 < length)
             {
                 result.Add("West");
             }
