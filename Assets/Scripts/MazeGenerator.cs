@@ -35,8 +35,11 @@ namespace MazeAssignment
             allocateFloors();
             changeColorFloorTest();
 
+            // Test Reset Edge weights
+            resetWeightsDirectedAtEdge();
+
             // Initial Test
-            PrimAlgo(floor[0][0]);
+            //PrimAlgo(floor[0][0]);
         }
 
         // Update is called once per frame
@@ -158,17 +161,17 @@ namespace MazeAssignment
         */
         public void PrimAlgo(Point inputPoint)
         {
-            //foreach (List<Point> a in floor)
-            //{
-            //    foreach (Point b in a)
-            //    { 
-            //        Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
-            //    }
-            //}
+            foreach (List<Point> a in floor)
+            {
+                foreach (Point b in a)
+                {
+                    Destroy(getIntermediatePoint(b, getLowestWeightDirection(b)).testPrefab);
+                }
+            }
 
-            string direction = getLowestWeightDirection(inputPoint);
-            Destroy(getIntermediatePoint(inputPoint, direction).testPrefab);
-            PrimAlgo(getAdjacentPoint(inputPoint, direction));
+            //string direction = getLowestWeightDirection(inputPoint);
+            //Destroy(getIntermediatePoint(inputPoint, direction).testPrefab);
+            //PrimAlgo(getAdjacentPoint(inputPoint, direction));
 
         }
 
@@ -243,6 +246,33 @@ namespace MazeAssignment
 
             // Something went Wrong
             return null;
+        }
+
+        // Helper Function - reset all weights directed towards the edges
+        public void resetWeightsDirectedAtEdge()
+        {
+            for (int x = 0; x < map.Count; x++)
+            {
+                for (int z = 0; z < map[x].Count; z++)
+                {
+                    if (x == 0)
+                    {
+                        map[x][z].setWest(-1);
+                    }
+                    if (z == 0)
+                    {
+                        map[x][z].setSouth(-1);
+                    }
+                    if (x == map[x].Count - 1)
+                    {
+                        map[x][z].setEast(-1);
+                    }
+                    if (z == map[z].Count - 1)
+                    {
+                        map[x][z].setNorth(-1);
+                    }
+                }
+            }
         }
 
         // Helper Function - Set the all the Walls
