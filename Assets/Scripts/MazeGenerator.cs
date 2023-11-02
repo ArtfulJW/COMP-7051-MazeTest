@@ -26,6 +26,8 @@ namespace MazeAssignment
 
         enum CardinalDirection { North = 0, South = 1, East = 2, West = 3};
 
+        List<Point> MST = new List<Point>();
+ 
         // Start is called before the first frame update
         void Start()
         {
@@ -176,12 +178,21 @@ namespace MazeAssignment
                 }
             }
 
+            //MST.Add(inputPoint);
+
             //string direction = getLowestWeightDirection(inputPoint);
             //Destroy(getIntermediatePoint(inputPoint, direction).testPrefab);
+
             //Point a = getAdjacentPoint(inputPoint, direction);
-            //if (map[map.Count-1][map[0].Count-1] != a)
+
+            //while (MST.Contains(a))
             //{
-            //    PrimAlgo(getAdjacentPoint(inputPoint, direction));
+            //    a = getAdjacentPoint(inputPoint, direction);
+            //}
+
+            //if (map[map.Count - 1][map[0].Count - 1] != a)
+            //{
+            //    PrimAlgo(a);
             //}
 
         }
@@ -280,8 +291,8 @@ namespace MazeAssignment
                     }
                     if (z == floor[z].Count - 1)
                     {
-                        floor[x][z].testPrefab.GetComponent<Renderer>().material.color = Color.yellow;
-                        floor[x][z].setNorth(-100);
+                        //floor[x][z].testPrefab.GetComponent<Renderer>().material.color = Color.yellow;
+                        floor[x][z].setNorth(-1);
                     }
                 }
             }
