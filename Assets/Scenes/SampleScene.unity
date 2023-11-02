@@ -353,7 +353,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c124fef6753a076418bc8eaf27d20724, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  length: 3
+  length: 7
   testPrefab: {fileID: 7619955107489052767, guid: b9e42e9c90697994d88a61dc571df9df, type: 3}
   StartTrigger: {fileID: 6526221511303578476, guid: 7953f2657bc8e574795b02d6e80d9e37, type: 3}
   EndTrigger: {fileID: 9083809484769456071, guid: c0777cf8d627b5442ab5911fd70bbdf2, type: 3}
+  FloorPrefab: {fileID: 1838923411822960548, guid: e8c6948b518869b488ba9ce372caf0a7, type: 3}
